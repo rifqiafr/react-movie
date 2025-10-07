@@ -1,6 +1,8 @@
+// src/components/MovieCard.jsx
+
 import React from 'react';
 
-// Fungsi bantuan untuk menampilkan rating sebagai bintang
+// Fungsi bantuan untuk menampilkan rating sebagai bintang (tetap sama)
 const renderStars = (rating) => {
   const fullStar = '★'; 
   const emptyStar = '☆'; 
@@ -14,12 +16,13 @@ const renderStars = (rating) => {
 };
 
 
-function MovieCard({ movie, deleteMovie, startEdit }) {
+function MovieCard({ movie, onCardClick }) { // Menerima onCardClick
     
   return (
-    <div className="movie-card">
+    // Tambahkan onClick ke div utama untuk membuka modal
+    <div className="movie-card" onClick={onCardClick} style={{ cursor: 'pointer' }}>
       
-      {/* Gambar Poster */}
+      {/* Gambar Poster dan Placeholder tetap sama */}
       {movie.posterUrl ? (
         <img 
           src={movie.posterUrl} 
@@ -43,20 +46,8 @@ function MovieCard({ movie, deleteMovie, startEdit }) {
             {renderStars(movie.rating)} <span style={{ marginLeft: '5px' }}>({movie.rating}/5)</span>
         </div>
 
-        <div className="card-actions">
-          <button 
-            onClick={() => startEdit(movie)} 
-            className="btn-action btn-edit"
-          >
-            Edit
-          </button>
-          <button 
-            onClick={() => deleteMovie(movie.id)} 
-            className="btn-action btn-delete"
-          >
-            Hapus
-          </button>
-        </div>
+        {/* TOMBOL ACTION TELAH DIHAPUS DARI SINI (Dipindahkan ke Modal) */}
+
       </div>
     </div>
   );

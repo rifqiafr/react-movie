@@ -11,6 +11,7 @@ const initialFormState = {
   posterUrl: '',
   rating: 3,
   genre: GENRES[0], 
+  overview: '', // <--- BARIS INI DITAMBAHKAN
 };
 
 // ===========================================
@@ -23,9 +24,9 @@ const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
   const [formData, setFormData] = useState(initialFormState);
-  const [searchQuery, setSearchQuery] = useState('');     // State untuk query pencarian
-  const [searchResults, setSearchResults] = useState([]); // State untuk hasil pencarian
-  const [isSearching, setIsSearching] = useState(false);  // State untuk status loading
+  const [searchQuery, setSearchQuery] = useState('');     
+  const [searchResults, setSearchResults] = useState([]); 
+  const [isSearching, setIsSearching] = useState(false);  
   const navigate = useNavigate();
 
   // Efek untuk mengisi form saat mode edit
@@ -36,7 +37,6 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
     } else {
       // Reset form jika tidak ada film yang di-edit
       setFormData(initialFormState);
-      // Reset hasil pencarian saat berpindah dari mode edit ke add
       setSearchResults([]); 
       setSearchQuery('');
     }
@@ -55,47 +55,46 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
         return;
     }
     
-    saveMovie(formData); // Memanggil handleSave di AddPage
+    saveMovie(formData); 
   };
   
   const handleCancelEdit = () => {
       setEditingMovie(null);
-      navigate('/'); // Kembali ke halaman utama
+      navigate('/'); 
   };
 
-  // ===================================
-  // FUNGSI BARU: MENCARI FILM DARI TMDB
-  // ===================================
+  // FUNGSI MENCARI FILM DARI TMDB (TETAP SAMA)
   const searchMovie = async () => {
-    if (!searchQuery.trim()) return;
+  if (!searchQuery.trim()) return;
 
-    setIsSearching(true);
-    setSearchResults([]);
+  setIsSearching(true);
+  setSearchResults([]);
+  
+  try {
+    // URL PENCARIAN DENGAN BAHASA INDONESIA DITAMBAHKAN
+    const response = await fetch(
+      // TAMBAHKAN "&language=id-ID" di akhir URL
+      `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchQuery)}&language=id-ID`
+    );
+    const data = await response.json();
     
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchQuery)}`
-      );
-      const data = await response.json();
+    // ... (Filter hasil yang relevan tetap sama) ...
+    const validResults = data.results
+      .filter(item => (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path)
+      .slice(0, 5); 
       
-      // Filter hasil yang relevan (movie/tv/anime) dan memiliki poster
-      const validResults = data.results
-        .filter(item => (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path)
-        .slice(0, 5); // Batasi 5 hasil teratas
-        
-      setSearchResults(validResults);
-    } catch (error) {
-      console.error("Error fetching movie data from TMDB:", error);
-      alert("Gagal mencari film. Pastikan API Key TMDB benar.");
-    } finally {
-      setIsSearching(false);
-    }
-  };
+    setSearchResults(validResults);
+  } catch (error) {
+    console.error("Error fetching movie data from TMDB:", error);
+    alert("Gagal mencari film. Pastikan API Key TMDB benar.");
+  } finally {
+    setIsSearching(false);
+  }
+};
 
 
-  // ===================================
+
   // FUNGSI BARU: MENGISI FORM DENGAN HASIL PILIHAN
-  // ===================================
   const selectResult = (result) => {
     let title = result.media_type === 'movie' ? result.title : result.name;
 
@@ -103,8 +102,8 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
     setFormData(prev => ({
         ...prev,
         title: title,
-        posterUrl: TMDB_IMAGE_BASE_URL + result.poster_path, // URL Poster lengkap
-        // Anda bisa menambahkan rating (result.vote_average / 2, dibulatkan) di sini
+        posterUrl: TMDB_IMAGE_BASE_URL + result.poster_path, 
+        overview: result.overview || 'Sinopsis tidak tersedia.', // <--- PENTING: SIMPAN OVERVIEW
     }));
 
     // Reset pencarian setelah dipilih
@@ -185,7 +184,6 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
         <div className="form-group">
             <label htmlFor="genre">Genre:</label>
             <select id="genre" name="genre" value={formData.genre} onChange={handleChange} className="form-input">
-                {/* LOOPING SEKARANG MENCETAK WESTERN JUGA */}
                 {GENRES.map(g => (
                     <option key={g} value={g}>{g}</option>
                 ))}
@@ -197,6 +195,22 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
             <label htmlFor="rating">Rating (1-5):</label>
             <input type="number" id="rating" name="rating" value={formData.rating} onChange={handleChange} min="1" max="5" required className="form-input" />
         </div>
+        
+        {/* INPUT: Overview/Sinopsis (Optional: Bisa ditambahkan sebagai field edit manual) */}
+        {editingMovie && (
+            <div className="form-group">
+                <label htmlFor="overview">Sinopsis (Edit Manual):</label>
+                <textarea 
+                    id="overview" 
+                    name="overview" 
+                    value={formData.overview} 
+                    onChange={handleChange} 
+                    className="form-input"
+                    rows="4"
+                    placeholder="Masukkan sinopsis atau catatan Anda..."
+                ></textarea>
+            </div>
+        )}
         
         <div className="form-actions">
             <button 

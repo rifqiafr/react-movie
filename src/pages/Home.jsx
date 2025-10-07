@@ -1,20 +1,38 @@
+// src/pages/Home.jsx
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
+import DetailModal from '../components/DetailModal'; // PENTING: Import Modal
 
 const GENRES = ['Semua', 'Indonesia', 'Anime', 'Drakor', 'Western']; 
 
 function Home({ movies, deleteMovie, startEdit, isLoading }) {
   const [filter, setFilter] = useState('Semua'); 
+  const [selectedMovie, setSelectedMovie] = useState(null); // STATE UNTUK MODAL
   
-  // Logika filter berdasarkan genre
   const filteredMovies = movies.filter(movie => {
     if (filter === 'Semua') return true;
     return movie.genre === filter;
   });
   
-  // Mengurutkan film agar yang baru ditambahkan biasanya muncul di atas
   const sortedMovies = [...filteredMovies].sort((a, b) => b.id - a.id);
+
+  // FUNGSI UNTUK MEMBUKA/MENUTUP MODAL
+  const openModal = (movie) => setSelectedMovie(movie);
+  const closeModal = () => setSelectedMovie(null);
+
+  // FUNGSI UNTUK MENGHAPUS DARI MODAL
+  const handleDeleteFromModal = (id) => {
+    closeModal(); 
+    deleteMovie(id); 
+  };
+
+  // FUNGSI UNTUK EDIT DARI MODAL
+  const handleEditFromModal = (movie) => {
+      closeModal(); 
+      startEdit(movie); 
+  };
 
   return (
     <section id="daftar">
@@ -22,9 +40,8 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
         Daftar Tontonan
       </h2>
       
-      {/* Filter Button */}
+      {/* Filter Button tetap sama */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          {/* LOOPING SEKARANG MENCETAK WESTERN JUGA */}
           {GENRES.map(g => (
               <button
                   key={g}
@@ -36,7 +53,7 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
           ))}
       </div>
       
-      {/* Tampilan Loading/Data Kosong */}
+      {/* Tampilan Movie Grid */}
       {isLoading ? (
         <p style={{ textAlign: 'center', fontSize: '1.2em' }}>Memuat data dari Firebase...</p>
       ) : sortedMovies.length === 0 ? (
@@ -50,12 +67,20 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
             <MovieCard 
               key={movie.id} 
               movie={movie} 
-              deleteMovie={deleteMovie}
-              startEdit={startEdit}
+              // PASSING FUNGSI KLIK UNTUK MEMBUKA MODAL
+              onCardClick={() => openModal(movie)} 
             />
           ))}
         </div>
       )}
+
+      {/* KOMPONEN MODAL DENGAN DATA YANG DIPILIH */}
+      <DetailModal 
+          movie={selectedMovie} 
+          onClose={closeModal} 
+          onDelete={() => handleDeleteFromModal(selectedMovie.id)}
+          onEdit={() => handleEditFromModal(selectedMovie)}
+      />
     </section>
   );
 }

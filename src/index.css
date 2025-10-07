@@ -324,3 +324,145 @@ body {
         margin: 0 10px;
     }
 }
+
+/* src/index.css - MODAL STYLING */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; 
+    opacity: 1; /* Langsung aktif karena logika ditampilkan oleh React */
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.modal-close-btn:hover {
+    color: #333;
+}
+
+.modal-body {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.modal-poster-container {
+    flex-shrink: 0; 
+    width: 250px;
+}
+
+.modal-poster {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Placeholder untuk poster besar */
+.placeholder-lg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 375px; /* Proporsi 250x375 (3:2) */
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 1.2em;
+    border-radius: 8px;
+}
+
+.modal-text-detail {
+    flex-grow: 1;
+}
+
+.modal-title {
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-info {
+    font-size: 1.1em;
+    margin: 8px 0;
+}
+
+.modal-action-buttons {
+    margin-top: 20px;
+}
+
+.btn-modal-edit, .btn-modal-delete {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 10px;
+    transition: transform 0.2s;
+}
+
+.btn-modal-edit {
+    background-color: #3b82f6; 
+    color: white;
+}
+.btn-modal-edit:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-modal-delete {
+    background-color: #ef4444; 
+    color: white;
+}
+.btn-modal-delete:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* Responsive untuk layar kecil */
+@media (max-width: 650px) {
+    .modal-body {
+        flex-direction: column;
+        align-items: center;
+    }
+    .modal-poster-container {
+        width: 60%;
+        margin-bottom: 20px;
+    }
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
