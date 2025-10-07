@@ -3,12 +3,12 @@ import { getFirestore } from "firebase/firestore";
 
 // GANTI DENGAN CONFIG ANDA YANG DIDAPAT DARI KONSOL FIREBASE
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID", // PENTING: Ganti dengan Project ID Anda
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "...",
-  appId: "..."
+  apiKey: "AIzaSyA0iZSxZnxQbJQ7Klm9ylwiLIluzx9BZLY",
+  authDomain: "react-movie-7f54e.firebaseapp.com",
+  projectId: "react-movie-7f54e",
+  storageBucket: "react-movie-7f54e.firebasestorage.app",
+  messagingSenderId: "175515459943",
+  appId: "1:175515459943:web:6e74d94bbbcd30102ecfc2"
 };
 
 // Inisialisasi Firebase
