@@ -5,7 +5,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f7f9; /* Warna latar belakang lembut */
+  background-color: #f4f7f9; 
   color: #333;
 }
 
@@ -40,7 +40,7 @@ body {
     display: block;
     margin-top: 5px;
     right: 0;
-    background: #4ade80; /* Warna hijau keren */
+    background: #4ade80;
     transition: width 0.3s ease;
 }
 
@@ -61,7 +61,7 @@ body {
     padding: 30px; 
     border-radius: 12px; 
     background-color: #ffffff; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Shadow lebih dalam */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
 }
 
 .form-group {
@@ -85,7 +85,7 @@ body {
 }
 
 .form-input:focus {
-    border-color: #3b82f6; /* Warna biru saat focus */
+    border-color: #3b82f6; 
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     outline: none;
 }
@@ -107,7 +107,7 @@ body {
 }
 
 .btn-add {
-    background-color: #10b981; /* Green */
+    background-color: #10b981; 
 }
 
 .btn-add:hover {
@@ -116,7 +116,7 @@ body {
 }
 
 .btn-edit {
-    background-color: #3b82f6; /* Blue */
+    background-color: #3b82f6; 
 }
 
 .btn-edit:hover {
@@ -125,7 +125,7 @@ body {
 }
 
 .btn-cancel {
-    background-color: #94a3b8; /* Gray */
+    background-color: #94a3b8; 
     color: white;
     padding: 12px 25px; 
     border: none; 
@@ -142,7 +142,7 @@ body {
 /* -------------------- MOVIE CARD STYLES -------------------- */
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Responsif */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
     gap: 30px;
 }
 
@@ -154,11 +154,11 @@ body {
     background-color: white;
     display: flex;
     flex-direction: column;
-    min-height: 450px; /* Tinggi minimum agar kartu seragam */
+    min-height: 450px; 
 }
 
 .movie-card:hover {
-    transform: translateY(-5px); /* Efek melayang */
+    transform: translateY(-5px); 
     box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
@@ -199,7 +199,18 @@ body {
 }
 
 .rating-stars {
-    color: #fbbf24; /* Warna Emas untuk Bintang */
+    color: #fbbf24; 
+}
+
+.card-genre {
+    display: inline-block;
+    background-color: #e0f2f1; /* Light Teal */
+    color: #00796b;
+    font-size: 0.75em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
 .card-actions .btn-action {
@@ -214,7 +225,7 @@ body {
 }
 
 .card-actions .btn-edit {
-    background-color: #93c5fd; /* Light Blue */
+    background-color: #93c5fd; 
     color: #1e3a8a;
 }
 .card-actions .btn-edit:hover {
@@ -222,14 +233,36 @@ body {
 }
 
 .card-actions .btn-delete {
-    background-color: #fca5a5; /* Light Red */
+    background-color: #fca5a5; 
     color: #7f1d1d;
 }
 .card-actions .btn-delete:hover {
     background-color: #f87171;
 }
 
-/* -------------------- RESPONSIVE (Opsional) -------------------- */
+/* Tombol Filter */
+.btn-filter {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.btn-filter:hover {
+    background-color: #e5e7eb;
+}
+
+.btn-filter.active {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+/* -------------------- RESPONSIVE -------------------- */
 @media (max-width: 768px) {
     .main-content {
         padding: 0 15px;
@@ -240,7 +273,6 @@ body {
         gap: 20px;
     }
 
-    /* Navbar menyesuaikan untuk mobile */
     header {
         flex-direction: column;
         text-align: center;

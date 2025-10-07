@@ -1,9 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; 
 
 function Header({ movieCount }) {
-  // Styling inline untuk header
   const headerStyle = {
-    backgroundColor: '#1f2937', // Darker background
+    backgroundColor: '#1f2937', 
     color: '#fff',
     padding: '15px 30px',
     display: 'flex',
@@ -19,6 +19,8 @@ function Header({ movieCount }) {
     fontSize: '1.8em',
     fontWeight: '700',
     letterSpacing: '0.5px',
+    color: '#fff', // Tambahkan warna untuk Link
+    textDecoration: 'none',
   };
 
   const navItemStyle = {
@@ -31,10 +33,10 @@ function Header({ movieCount }) {
 
   return (
     <header style={headerStyle}>
-      <div style={logoStyle}>🎬 My Watchlist</div>
+      <Link to="/" style={logoStyle}>🎬 My Watchlist</Link>
       <nav>
-        <a href="#tambah" style={navItemStyle} className="nav-link-hover">Tambah Baru</a>
-        <a href="#daftar" style={navItemStyle} className="nav-link-hover">Daftar ({movieCount})</a>
+        <Link to="/add" style={navItemStyle} className="nav-link-hover">Tambah Baru</Link>
+        <Link to="/" style={navItemStyle} className="nav-link-hover">Daftar ({movieCount})</Link>
       </nav>
     </header>
   );

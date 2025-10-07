@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+const GENRES = ['Indonesia', 'Anime', 'Drakor', 'Lainnya']; // Tambahkan 'Lainnya'
 const initialFormState = {
   title: '',
   posterUrl: '',
   rating: 3,
+  genre: GENRES[0], 
 };
 
 function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
   const [formData, setFormData] = useState(initialFormState);
+  const navigate = useNavigate();
 
-  // Mengisi form saat mode edit
+  // Efek untuk mengisi form saat mode edit
   useEffect(() => {
     if (editingMovie) {
-      setFormData(editingMovie); 
+      setFormData({...editingMovie, genre: editingMovie.genre || GENRES[3]}); // Default ke 'Lainnya' jika genre tidak ada
     } else {
       setFormData(initialFormState);
     }
@@ -20,7 +24,6 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Mengubah rating menjadi angka
     const finalValue = name === 'rating' ? parseInt(value) : value;
     setFormData({ ...formData, [name]: finalValue });
   };
@@ -32,35 +35,44 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
         return;
     }
     
-    saveMovie(formData);
-    setFormData(initialFormState);
+    saveMovie(formData); // Memanggil handleSave di AddPage
   };
   
   const handleCancelEdit = () => {
       setEditingMovie(null);
+      navigate('/'); // Kembali ke halaman utama
   };
 
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
         
-        {['title', 'posterUrl', 'rating'].map((field) => (
-            <div className="form-group" key={field}>
-                <label htmlFor={field}>{field === 'title' ? 'Judul' : field === 'posterUrl' ? 'URL Poster' : 'Rating (1-5)'}:</label>
-                <input
-                    type={field === 'rating' ? 'number' : 'text'}
-                    id={field}
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    required={field !== 'posterUrl'}
-                    min={field === 'rating' ? "1" : null}
-                    max={field === 'rating' ? "5" : null}
-                    className="form-input"
-                />
-            </div>
-        ))}
+        <div className="form-group">
+            <label htmlFor="title">Judul:</label>
+            <input type="text" id="title" name="title" value={formData.title} onChange={handleChange} required className="form-input" />
+        </div>
 
+        <div className="form-group">
+            <label htmlFor="posterUrl">URL Poster (Link Gambar):</label>
+            <input type="text" id="posterUrl" name="posterUrl" value={formData.posterUrl} onChange={handleChange} className="form-input" />
+        </div>
+        
+        {/* INPUT: GENRE */}
+        <div className="form-group">
+            <label htmlFor="genre">Genre:</label>
+            <select id="genre" name="genre" value={formData.genre} onChange={handleChange} className="form-input">
+                {GENRES.map(g => (
+                    <option key={g} value={g}>{g}</option>
+                ))}
+            </select>
+        </div>
+        
+        {/* INPUT: Rating */}
+        <div className="form-group">
+            <label htmlFor="rating">Rating (1-5):</label>
+            <input type="number" id="rating" name="rating" value={formData.rating} onChange={handleChange} min="1" max="5" required className="form-input" />
+        </div>
+        
         <div className="form-actions">
             <button 
                 type="submit" 

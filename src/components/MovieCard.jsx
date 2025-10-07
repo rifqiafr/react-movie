@@ -25,7 +25,6 @@ function MovieCard({ movie, deleteMovie, startEdit }) {
           src={movie.posterUrl} 
           alt={movie.title} 
           className="card-poster"
-          // Placeholder jika gambar gagal dimuat
           onError={(e) => { e.target.onerror = null; e.target.src="https://via.placeholder.com/200x300?text=No+Poster"; }}
         />
       ) : (
@@ -35,7 +34,11 @@ function MovieCard({ movie, deleteMovie, startEdit }) {
       )}
 
       <div className="card-content">
-        <h4 className="card-title">{movie.title}</h4>
+        <div>
+            <span className="card-genre">[{movie.genre || 'Lainnya'}]</span> 
+            <h4 className="card-title">{movie.title}</h4>
+        </div>
+        
         <div className="card-rating">
             {renderStars(movie.rating)} <span style={{ marginLeft: '5px' }}>({movie.rating}/5)</span>
         </div>

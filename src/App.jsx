@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import MovieForm from './components/MovieForm';
-import MovieCard from './components/MovieCard';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
-import './index.css'; 
+import Home from './pages/Home';
+import AddPage from './pages/AddPage';
+import './index.css';
 
-// IMPORT FIREBASE FUNCTIONS
-import { db } from './firebase'; // Import db instance
+// Import Firebase
+import { db } from './firebase'; 
 import { 
   collection, 
   getDocs, 
@@ -15,13 +16,14 @@ import {
   doc 
 } from 'firebase/firestore'; 
 
-// Nama koleksi di Firestore
 const MOVIES_COLLECTION = 'watchlist'; 
 
-function App() {
+// MainApp menampung semua logika data dan membagikannya ke Pages
+function MainApp() { 
   const [movies, setMovies] = useState([]);
   const [editingMovie, setEditingMovie] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // State untuk loading
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   // ===================================
   // FUNGSI R (READ): Mengambil Data dari Firestore
@@ -37,13 +39,12 @@ function App() {
       setMovies(moviesList);
     } catch (error) {
       console.error("Error fetching documents: ", error);
-      alert("Gagal memuat data dari Firebase!");
+      // alert("Gagal memuat data dari Firebase!"); // Komentar sementara saat dev
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Panggil fetchMovies saat komponen pertama kali dimuat
   useEffect(() => {
     fetchMovies();
   }, []);
@@ -56,14 +57,11 @@ function App() {
       if (movieData.id) {
         // Logic UPDATE
         const movieRef = doc(db, MOVIES_COLLECTION, movieData.id);
-        // Hapus ID dari data sebelum update agar tidak tersimpan di Firestore data
-        const { id: _id, ...dataToUpdate } = movieData;  
+        const { id: _id, ...dataToUpdate } = movieData; 
         await updateDoc(movieRef, dataToUpdate);
-        alert("Film berhasil diubah!");
       } else {
         // Logic CREATE
         await addDoc(collection(db, MOVIES_COLLECTION), movieData);
-        alert("Film berhasil ditambahkan!");
       }
       // Ambil data terbaru setelah operasi
       fetchMovies(); 
@@ -78,8 +76,6 @@ function App() {
     if (window.confirm("Yakin ingin menghapus film ini? (Data akan terhapus online)")) {
       try {
         await deleteDoc(doc(db, MOVIES_COLLECTION, id));
-        alert("Film berhasil dihapus!");
-        // Ambil data terbaru setelah operasi
         fetchMovies(); 
       } catch (error) {
         console.error("Error deleting movie: ", error);
@@ -88,60 +84,45 @@ function App() {
     }
   };
 
+  // Fungsi untuk memulai edit (hanya navigasi ke halaman Edit)
   const startEdit = (movie) => {
-    setEditingMovie(movie);
-    document.getElementById('tambah').scrollIntoView({ behavior: 'smooth' });
+    navigate(`/add/${movie.id}`);
   };
-  
-  // Perubahan pada tampilan saat loading
+
   return (
     <div className="app-container">
       <Header movieCount={movies.length} />
 
       <main className="main-content">
-        
-        {/* Form untuk Add atau Edit */}
-        <section id="tambah" className="form-section">
-            {/* ... (Tampilan h2 dan MovieForm tetap sama) ... */}
-            <h2 style={{ textAlign: 'center', color: '#333' }}>
-                {editingMovie ? '📝 Edit Entri' : '➕ Tambah Entri Baru'}
-            </h2>
-            <MovieForm 
-              saveMovie={saveMovie} 
-              editingMovie={editingMovie}
-              setEditingMovie={setEditingMovie}
-            />
-        </section>
-
-        <hr className="divider" />
-
-        {/* Daftar Film */}
-        <section id="daftar">
-          <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '30px' }}>
-            Daftar Tontonan ({movies.length} Entri)
-          </h2>
-          
-          {isLoading ? (
-            <p style={{ textAlign: 'center', fontSize: '1.2em' }}>Memuat data dari Firebase...</p>
-          ) : movies.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#777' }}>
-                Daftar tontonan masih kosong. Tambahkan film pertama Anda!
-            </p>
-          ) : (
-            <div className="movie-grid">
-              {movies.map(movie => (
-                <MovieCard 
-                  key={movie.id} 
-                  movie={movie} 
-                  deleteMovie={deleteMovie}
-                  startEdit={startEdit}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+        <Routes>
+          {/* Halaman Utama: Daftar Tontonan */}
+          <Route 
+            path="/" 
+            element={<Home movies={movies} deleteMovie={deleteMovie} startEdit={startEdit} isLoading={isLoading} />} 
+          />
+          {/* Halaman Tambah Baru */}
+          <Route 
+            path="/add" 
+            element={<AddPage saveMovie={saveMovie} movies={movies} editingMovie={editingMovie} setEditingMovie={setEditingMovie} />} 
+          />
+          {/* Halaman Edit Berdasarkan ID */}
+          <Route 
+            path="/add/:id" 
+            element={<AddPage saveMovie={saveMovie} movies={movies} editingMovie={editingMovie} setEditingMovie={setEditingMovie} />} 
+          />
+        </Routes>
       </main>
     </div>
+  );
+}
+
+// Fungsi utama App yang mengaktifkan Router
+function App() {
+  // BASE_URL disetel di vite.config.js untuk GitHub Pages
+  return (
+    <Router basename={import.meta.env.BASE_URL || '/react-movie/'}> 
+        <MainApp />
+    </Router>
   );
 }
 
