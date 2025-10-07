@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
-const GENRES = ['Semua', 'Indonesia', 'Anime', 'Drakor']; 
+const GENRES = ['Semua', 'Indonesia', 'Anime', 'Drakor', 'Western']; 
 
 function Home({ movies, deleteMovie, startEdit, isLoading }) {
   const [filter, setFilter] = useState('Semua'); 
@@ -24,6 +24,7 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
       
       {/* Filter Button */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          {/* LOOPING SEKARANG MENCETAK WESTERN JUGA */}
           {GENRES.map(g => (
               <button
                   key={g}

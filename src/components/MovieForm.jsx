@@ -1,7 +1,11 @@
+// src/components/MovieForm.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const GENRES = ['Indonesia', 'Anime', 'Drakor', 'Lainnya']; // Tambahkan 'Lainnya'
+// DAFTAR GENRE
+const GENRES = ['Indonesia', 'Anime', 'Drakor', 'Western', 'Lainnya']; 
+
 const initialFormState = {
   title: '',
   posterUrl: '',
@@ -9,16 +13,32 @@ const initialFormState = {
   genre: GENRES[0], 
 };
 
+// ===========================================
+// PENTING: GANTI DENGAN KUNCI API TMDB ANDA!
+// ===========================================
+const TMDB_API_KEY = "31d97d6787fa4847e1693a6dc7b9cd90";
+const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"; 
+// ===========================================
+
+
 function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
   const [formData, setFormData] = useState(initialFormState);
+  const [searchQuery, setSearchQuery] = useState('');     // State untuk query pencarian
+  const [searchResults, setSearchResults] = useState([]); // State untuk hasil pencarian
+  const [isSearching, setIsSearching] = useState(false);  // State untuk status loading
   const navigate = useNavigate();
 
   // Efek untuk mengisi form saat mode edit
   useEffect(() => {
     if (editingMovie) {
-      setFormData({...editingMovie, genre: editingMovie.genre || GENRES[3]}); // Default ke 'Lainnya' jika genre tidak ada
+      // Mengisi form dengan data film yang sedang di-edit
+      setFormData({...editingMovie, genre: editingMovie.genre || GENRES[3]}); 
     } else {
+      // Reset form jika tidak ada film yang di-edit
       setFormData(initialFormState);
+      // Reset hasil pencarian saat berpindah dari mode edit ke add
+      setSearchResults([]); 
+      setSearchQuery('');
     }
   }, [editingMovie]);
 
@@ -43,24 +63,129 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
       navigate('/'); // Kembali ke halaman utama
   };
 
+  // ===================================
+  // FUNGSI BARU: MENCARI FILM DARI TMDB
+  // ===================================
+  const searchMovie = async () => {
+    if (!searchQuery.trim()) return;
+
+    setIsSearching(true);
+    setSearchResults([]);
+    
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchQuery)}`
+      );
+      const data = await response.json();
+      
+      // Filter hasil yang relevan (movie/tv/anime) dan memiliki poster
+      const validResults = data.results
+        .filter(item => (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path)
+        .slice(0, 5); // Batasi 5 hasil teratas
+        
+      setSearchResults(validResults);
+    } catch (error) {
+      console.error("Error fetching movie data from TMDB:", error);
+      alert("Gagal mencari film. Pastikan API Key TMDB benar.");
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+
+  // ===================================
+  // FUNGSI BARU: MENGISI FORM DENGAN HASIL PILIHAN
+  // ===================================
+  const selectResult = (result) => {
+    let title = result.media_type === 'movie' ? result.title : result.name;
+
+    // Mengisi form dengan data yang ditemukan
+    setFormData(prev => ({
+        ...prev,
+        title: title,
+        posterUrl: TMDB_IMAGE_BASE_URL + result.poster_path, // URL Poster lengkap
+        // Anda bisa menambahkan rating (result.vote_average / 2, dibulatkan) di sini
+    }));
+
+    // Reset pencarian setelah dipilih
+    setSearchResults([]);
+    setSearchQuery('');
+  };
+
+
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
         
+        {/* FIELD PENCARIAN TMDB (Hanya tampil di mode ADD) */}
+        {!editingMovie && ( 
+            <div className="form-group tmdb-search-box">
+                <label>🔎 **Cari Poster Otomatis (via TMDB):**</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <input
+                        type="text"
+                        placeholder="Masukkan judul film/acara..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="form-input"
+                        style={{ flexGrow: 1 }}
+                    />
+                    <button 
+                        type="button" 
+                        onClick={searchMovie}
+                        className="btn-submit btn-edit"
+                        disabled={isSearching}
+                        style={{ padding: '0 15px', minWidth: '100px' }}
+                    >
+                        {isSearching ? 'Mencari...' : 'Cari'}
+                    </button>
+                </div>
+                
+                {/* HASIL PENCARIAN */}
+                {searchResults.length > 0 && (
+                    <div className="search-results-list">
+                        <p style={{ margin: '0 0 10px 0', fontSize: '0.9em', fontWeight: 'bold' }}>Pilih Hasil:</p>
+                        {searchResults.map(result => (
+                            <div 
+                                key={result.id} 
+                                onClick={() => selectResult(result)} 
+                                className="search-result-item"
+                            >
+                                <img 
+                                    src={TMDB_IMAGE_BASE_URL + result.poster_path} 
+                                    alt={result.title || result.name} 
+                                    className="search-result-poster"
+                                />
+                                <div>
+                                    <strong style={{ fontSize: '0.9em' }}>{result.title || result.name}</strong> 
+                                    <span style={{ fontSize: '0.8em', color: '#666', marginLeft: '10px' }}>
+                                        ({result.media_type === 'movie' ? 'Film' : 'Acara TV/Anime'})
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        )}
+        
+        {/* INPUT: Judul */}
         <div className="form-group">
             <label htmlFor="title">Judul:</label>
             <input type="text" id="title" name="title" value={formData.title} onChange={handleChange} required className="form-input" />
         </div>
 
+        {/* INPUT: URL Poster */}
         <div className="form-group">
-            <label htmlFor="posterUrl">URL Poster (Link Gambar):</label>
-            <input type="text" id="posterUrl" name="posterUrl" value={formData.posterUrl} onChange={handleChange} className="form-input" />
+            <label htmlFor="posterUrl">URL Poster (Otomatis terisi dari Pencarian):</label>
+            <input type="text" id="posterUrl" name="posterUrl" value={formData.posterUrl} onChange={handleChange} className="form-input" placeholder="URL Poster (Diisi otomatis atau manual)" />
         </div>
         
         {/* INPUT: GENRE */}
         <div className="form-group">
             <label htmlFor="genre">Genre:</label>
             <select id="genre" name="genre" value={formData.genre} onChange={handleChange} className="form-input">
+                {/* LOOPING SEKARANG MENCETAK WESTERN JUGA */}
                 {GENRES.map(g => (
                     <option key={g} value={g}>{g}</option>
                 ))}

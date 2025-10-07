@@ -94,6 +94,46 @@ body {
     margin-top: 30px;
 }
 
+/* src/index.css - Tambahkan di bagian FORM STYLES */
+
+.tmdb-search-box {
+    border: 1px solid #3b82f6; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 25px; 
+    background-color: #eff6ff;
+}
+
+.search-results-list {
+    margin-top: 15px; 
+    max-height: 250px; 
+    overflow-y: auto; 
+    border-top: 1px solid #d2e4f0; 
+    padding-top: 10px;
+}
+
+.search-result-item {
+    display: flex; 
+    align-items: center; 
+    padding: 8px; 
+    cursor: pointer; 
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    background-color: #e0f7fa; 
+    border-radius: 4px;
+}
+
+.search-result-poster {
+    width: 40px; 
+    height: 60px; 
+    object-fit: cover; 
+    margin-right: 10px; 
+    border-radius: 4px;
+}
+
 /* Tombol (Button) Styling */
 .btn-submit {
     padding: 12px 25px; 
