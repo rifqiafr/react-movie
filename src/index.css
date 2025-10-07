@@ -1,6 +1,8 @@
 /* src/index.css */
 
-/* Reset Dasar */
+/* =================================================== */
+/* GLOBAL RESET & LAYOUT */
+/* =================================================== */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
@@ -9,7 +11,6 @@ body {
   color: #333;
 }
 
-/* Kontainer Utama */
 .app-container {
     min-height: 100vh;
 }
@@ -29,7 +30,6 @@ body {
 /* -------------------- HEADER/NAVBAR STYLES -------------------- */
 .nav-link-hover {
     position: relative;
-    /* Efek underline saat hover */
 }
 
 .nav-link-hover::after {
@@ -51,7 +51,22 @@ body {
 }
 
 
-/* -------------------- FORM STYLES -------------------- */
+/* =================================================== */
+/* FORM STYLES & BUTTONS */
+/* =================================================== */
+
+/* Bintang Interaktif */
+.star-rating-input {
+    font-size: 2.5em; 
+    cursor: pointer;
+    line-height: 1; 
+}
+
+.star-icon {
+    transition: color 0.2s; 
+    margin-right: 5px;
+}
+
 .form-section {
     max-width: 800px;
     margin: 0 auto;
@@ -94,8 +109,7 @@ body {
     margin-top: 30px;
 }
 
-/* src/index.css - Tambahkan di bagian FORM STYLES */
-
+/* TMDB Search Box */
 .tmdb-search-box {
     border: 1px solid #3b82f6; 
     padding: 15px; 
@@ -134,7 +148,7 @@ body {
     border-radius: 4px;
 }
 
-/* Tombol (Button) Styling */
+/* Tombol Dasar */
 .btn-submit {
     padding: 12px 25px; 
     color: white; 
@@ -179,27 +193,53 @@ body {
     background-color: #64748b;
 }
 
-/* -------------------- MOVIE CARD STYLES -------------------- */
+/* Tombol Filter */
+.btn-filter {
+    padding: 8px 16px; 
+    margin: 0 4px;
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Bentuk bulat */
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.btn-filter:hover {
+    background-color: #e5e7eb;
+}
+
+.btn-filter.active {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    transform: scale(1.05);
+}
+
+/* =================================================== */
+/* MOVIE CARD STYLES (Clean & Minimalist) */
+/* =================================================== */
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-    gap: 30px;
+    gap: 25px; /* Jarak antar card */
 }
 
 .movie-card {
     border-radius: 12px; 
     overflow: hidden; 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Shadow halus */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background-color: white;
     display: flex;
     flex-direction: column;
-    min-height: 450px; 
+    min-height: auto; 
 }
 
 .movie-card:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    transform: translateY(-3px); /* Efek hover lebih halus */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 }
 
 .card-poster {
@@ -219,8 +259,8 @@ body {
 }
 
 .card-content {
-    padding: 15px;
-    text-align: center;
+    padding: 15px 10px; /* Padding disesuaikan */
+    text-align: left; /* Rata kiri */
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -228,104 +268,103 @@ body {
 }
 
 .card-title {
-    margin: 0 0 10px 0;
-    font-size: 1.2em;
-    font-weight: 700;
+    font-size: 1.1em;
+    font-weight: 600; 
+    margin: 5px 0 0;
 }
 
-.card-rating {
-    font-size: 1.2em;
-    margin-bottom: 15px;
-}
-
-.rating-stars {
-    color: #fbbf24; 
-}
-
+/* GENRE BARU (Minimalist) */
 .card-genre {
     display: inline-block;
-    background-color: #e0f2f1; /* Light Teal */
-    color: #00796b;
-    font-size: 0.75em;
-    padding: 2px 8px;
+    padding: 2px 6px; 
     border-radius: 4px;
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-.card-actions .btn-action {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    margin: 0 5px;
-}
-
-.card-actions .btn-edit {
-    background-color: #93c5fd; 
-    color: #1e3a8a;
-}
-.card-actions .btn-edit:hover {
-    background-color: #60a5fa;
-}
-
-.card-actions .btn-delete {
-    background-color: #fca5a5; 
-    color: #7f1d1d;
-}
-.card-actions .btn-delete:hover {
-    background-color: #f87171;
-}
-
-/* Tombol Filter */
-.btn-filter {
-    padding: 10px 20px;
-    margin: 0 5px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: #fff;
-    transition: all 0.2s ease;
-    font-weight: 600;
-}
-
-.btn-filter:hover {
-    background-color: #e5e7eb;
-}
-
-.btn-filter.active {
-    background-color: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
-}
-
-/* -------------------- RESPONSIVE -------------------- */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 0 15px;
-    }
+    font-size: 0.7em; 
+    font-weight: 700;
+    margin-bottom: 5px;
     
-    .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 20px;
-    }
+    color: #4b5563; /* Teks abu-abu gelap */
+    background-color: #e5e7eb; /* Latar belakang abu-abu sangat muda */
+    border: 1px solid #d1d5db; 
+}
 
-    header {
+/* RATING BARU (Bintang dan Teks) */
+.card-rating {
+    background-color: transparent !important; /* Hapus latar belakang warna lama */
+    padding: 0;
+    margin-top: 5px; 
+    font-size: 1em;
+    font-weight: 600; 
+}
+
+.card-rating span {
+    color: #4b5563 !important; /* Warna teks rating disamakan */
+}
+
+/* WARNA RATING DINAMIS: Hanya berlaku untuk bintang (*.rating-stars) */
+/* Bintang dasar (untuk MovieCard dan DetailModal) */
+.rating-stars {
+    color: #ffc107; /* Default warna bintang (emas) */
+}
+
+/* Rating TINGGI (4 atau 5) */
+.rating-high .rating-stars {
+    color: #10b981; /* Hijau Keren */
+}
+
+/* Rating SEDANG (3) */
+.rating-medium .rating-stars {
+    color: #f59e0b; /* Oranye */
+}
+
+/* Rating RENDAH (1 atau 2) */
+.rating-low .rating-stars {
+    color: #ef4444; /* Merah */
+}
+
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    /* Rata kanan agar sejajar dengan filter */
+    justify-content: flex-end; 
+}
+
+.sort-controls label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9em;
+}
+
+.sort-controls .sort-select {
+    /* Menggunakan style form-input dasar, tapi disesuaikan */
+    width: auto;
+    min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    background-color: white;
+    /* Memastikan box-sizing diatur agar tidak terlalu lebar */
+    box-sizing: border-box; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Jika Anda ingin memastikan select tetap terlihat bagus di mobile */
+@media (max-width: 600px) {
+    .sort-controls {
         flex-direction: column;
-        text-align: center;
+        align-items: stretch;
     }
-    nav {
-        margin-top: 10px;
-    }
-    nav a {
-        margin: 0 10px;
+    .sort-controls .sort-select {
+        min-width: 100%;
     }
 }
 
-/* src/index.css - MODAL STYLING */
+
+/* =================================================== */
+/* MODAL STYLES */
+/* =================================================== */
 
 .modal-overlay {
     position: fixed;
@@ -338,7 +377,7 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 2000; 
-    opacity: 1; /* Langsung aktif karena logika ditampilkan oleh React */
+    opacity: 1; 
     pointer-events: auto;
     transition: opacity 0.3s ease;
 }
@@ -389,12 +428,11 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Placeholder untuk poster besar */
 .placeholder-lg {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 375px; /* Proporsi 250x375 (3:2) */
+    height: 375px; 
     background-color: #e2e8f0;
     color: #94a3b8;
     font-weight: 600;
@@ -451,8 +489,30 @@ body {
     transform: translateY(-1px);
 }
 
-/* Responsive untuk layar kecil */
-@media (max-width: 650px) {
+/* =================================================== */
+/* RESPONSIVE */
+/* =================================================== */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 0 15px;
+    }
+    
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+    }
+
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    nav {
+        margin-top: 10px;
+    }
+    nav a {
+        margin: 0 10px;
+    }
+    
     .modal-body {
         flex-direction: column;
         align-items: center;

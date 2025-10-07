@@ -11,7 +11,7 @@ const initialFormState = {
   posterUrl: '',
   rating: 3,
   genre: GENRES[0], 
-  overview: '', // <--- BARIS INI DITAMBAHKAN
+  overview: '',
 };
 
 // ===========================================
@@ -27,25 +27,24 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
   const [searchQuery, setSearchQuery] = useState('');     
   const [searchResults, setSearchResults] = useState([]); 
   const [isSearching, setIsSearching] = useState(false);  
+  const [hover, setHover] = useState(0); // STATE BARU UNTUK HOVER BINTANG
   const navigate = useNavigate();
 
   // Efek untuk mengisi form saat mode edit
   useEffect(() => {
     if (editingMovie) {
-      // Mengisi form dengan data film yang sedang di-edit
-      setFormData({...editingMovie, genre: editingMovie.genre || GENRES[3]}); 
+      setFormData({...editingMovie, genre: editingMovie.genre || GENRES[4]}); // Default ke Lainnya
     } else {
-      // Reset form jika tidak ada film yang di-edit
       setFormData(initialFormState);
       setSearchResults([]); 
       setSearchQuery('');
     }
   }, [editingMovie]);
 
+  // FUNGSI INI HANYA UNTUK TEKS/DROPDOWN, BUKAN RATING
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const finalValue = name === 'rating' ? parseInt(value) : value;
-    setFormData({ ...formData, [name]: finalValue });
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
@@ -63,50 +62,42 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
       navigate('/'); 
   };
 
-  // FUNGSI MENCARI FILM DARI TMDB (TETAP SAMA)
   const searchMovie = async () => {
-  if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) return;
 
-  setIsSearching(true);
-  setSearchResults([]);
-  
-  try {
-    // URL PENCARIAN DENGAN BAHASA INDONESIA DITAMBAHKAN
-    const response = await fetch(
-      // TAMBAHKAN "&language=id-ID" di akhir URL
-      `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchQuery)}&language=id-ID`
-    );
-    const data = await response.json();
+    setIsSearching(true);
+    setSearchResults([]);
     
-    // ... (Filter hasil yang relevan tetap sama) ...
-    const validResults = data.results
-      .filter(item => (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path)
-      .slice(0, 5); 
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchQuery)}&language=id-ID` // Language ID
+      );
+      const data = await response.json();
       
-    setSearchResults(validResults);
-  } catch (error) {
-    console.error("Error fetching movie data from TMDB:", error);
-    alert("Gagal mencari film. Pastikan API Key TMDB benar.");
-  } finally {
-    setIsSearching(false);
-  }
-};
+      const validResults = data.results
+        .filter(item => (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path)
+        .slice(0, 5);
+        
+      setSearchResults(validResults);
+    } catch (error) {
+      console.error("Error fetching movie data from TMDB:", error);
+      alert("Gagal mencari film. Pastikan API Key TMDB benar.");
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
 
-
-  // FUNGSI BARU: MENGISI FORM DENGAN HASIL PILIHAN
   const selectResult = (result) => {
     let title = result.media_type === 'movie' ? result.title : result.name;
 
-    // Mengisi form dengan data yang ditemukan
     setFormData(prev => ({
         ...prev,
         title: title,
         posterUrl: TMDB_IMAGE_BASE_URL + result.poster_path, 
-        overview: result.overview || 'Sinopsis tidak tersedia.', // <--- PENTING: SIMPAN OVERVIEW
+        overview: result.overview || 'Sinopsis tidak tersedia.', 
     }));
 
-    // Reset pencarian setelah dipilih
     setSearchResults([]);
     setSearchQuery('');
   };
@@ -190,10 +181,35 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
             </select>
         </div>
         
-        {/* INPUT: Rating */}
+        {/* INPUT BARU: Rating (Bintang Interaktif) */}
         <div className="form-group">
-            <label htmlFor="rating">Rating (1-5):</label>
-            <input type="number" id="rating" name="rating" value={formData.rating} onChange={handleChange} min="1" max="5" required className="form-input" />
+            <label>Rating (1-5):</label>
+            <div className="star-rating-input">
+                {/* Loop 5 kali untuk membuat 5 bintang */}
+                {[...Array(5)].map((star, index) => {
+                    const ratingValue = index + 1;
+                    return (
+                        <span
+                            key={index}
+                            className="star-icon"
+                            style={{
+                                color: ratingValue <= (hover || formData.rating) ? "#ffc107" : "#e4e5e9",
+                            }}
+                            // Saat diklik, update rating
+                            onClick={() => setFormData({ ...formData, rating: ratingValue })}
+                            // Saat mouse masuk, set hover
+                            onMouseEnter={() => setHover(ratingValue)}
+                            // Saat mouse keluar, reset hover
+                            onMouseLeave={() => setHover(0)}
+                        >
+                            ★
+                        </span>
+                    );
+                })}
+            </div>
+            <p style={{marginTop: '5px', fontSize: '0.9em', color: '#666'}}>
+                Rating saat ini: **{formData.rating}**
+            </p>
         </div>
         
         {/* INPUT: Overview/Sinopsis (Optional: Bisa ditambahkan sebagai field edit manual) */}

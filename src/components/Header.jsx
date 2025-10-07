@@ -33,7 +33,7 @@ function Header({ movieCount }) {
 
   return (
     <header style={headerStyle}>
-      <Link to="/" style={logoStyle}>🎬 My Watchlist</Link>
+      <Link to="/" style={logoStyle}>🎬 MovieTime</Link>
       <nav>
         <Link to="/add" style={navItemStyle} className="nav-link-hover">Tambah Baru</Link>
         <Link to="/" style={navItemStyle} className="nav-link-hover">Daftar ({movieCount})</Link>
