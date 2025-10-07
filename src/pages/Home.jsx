@@ -8,7 +8,7 @@ import DetailModal from '../components/DetailModal';
 // --- KONSTANTA ---
 const GENRES = ['Semua', 'Indonesia', 'Anime', 'Drakor', 'Western', 'Lainnya']; 
 
-const STATUS_OPTIONS = ['Semua', 'Planned', 'Watching', 'Finished']; // OPSI FILTER STATUS
+const STATUS_OPTIONS = ['Semua', 'Planned', 'Watching', 'Finished']; 
 const DISPLAY_STATUS_MAP = {
     'Semua': 'Semua',
     'Planned': 'Akan Ditonton',
@@ -27,11 +27,11 @@ const SORT_OPTIONS = [
 
 function Home({ movies, deleteMovie, startEdit, isLoading }) {
     const [activeGenre, setActiveGenre] = useState('Semua'); 
-    const [activeStatus, setActiveStatus] = useState('Semua'); // STATE BARU UNTUK STATUS FILTER
+    const [activeStatus, setActiveStatus] = useState('Semua'); 
     const [sortCriteria, setSortCriteria] = useState('recent'); 
     const [selectedMovie, setSelectedMovie] = useState(null); 
     
-    // --- LOGIKA FILTER DAN SORTIR UTAMA ---
+    // --- LOGIKA FILTER DAN SORTIR UTAMA (TETAP SAMA) ---
     const sortedAndFilteredMovies = useMemo(() => {
         let currentMovies = movies;
         
@@ -40,7 +40,7 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
             ? currentMovies
             : currentMovies.filter(movie => movie.genre === activeGenre);
 
-        // 2. FILTER BERDASARKAN STATUS BARU
+        // 2. FILTER BERDASARKAN STATUS
         currentMovies = activeStatus === 'Semua'
             ? currentMovies
             : currentMovies.filter(movie => (movie.status || 'Planned') === activeStatus); 
@@ -86,47 +86,57 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
                 Daftar Tontonan
             </h2>
             
-            {/* Filter Genre */}
-            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                <strong style={{ display: 'block', marginBottom: '10px' }}>Filter Genre:</strong>
-                {GENRES.map(g => (
-                    <button
-                        key={g}
-                        onClick={() => setActiveGenre(g)}
-                        className={`btn-filter ${activeGenre === g ? 'active' : ''}`}
-                    >
-                        {g} ({movies.filter(m => g === 'Semua' || m.genre === g).length})
-                    </button>
-                ))}
-            </div>
+            {/* PANEL KONTROL BARU */}
+            <div className="control-panel">
+                
+                {/* Filter Genre */}
+                <div className="filter-group">
+                    <strong className="control-label">Filter Genre:</strong>
+                    <div className="filter-button-container">
+                        {GENRES.map(g => (
+                            <button
+                                key={g}
+                                onClick={() => setActiveGenre(g)}
+                                className={`btn-filter ${activeGenre === g ? 'active' : ''}`}
+                            >
+                                {g} ({movies.filter(m => g === 'Semua' || m.genre === g).length})
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-            {/* Filter Status BARU */}
-            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                <strong style={{ display: 'block', marginBottom: '10px' }}>Filter Status:</strong>
-                {STATUS_OPTIONS.map(s => (
-                    <button
-                        key={s}
-                        onClick={() => setActiveStatus(s)}
-                        className={`btn-filter ${activeStatus === s ? 'active' : ''}`}
-                    >
-                        {DISPLAY_STATUS_MAP[s]} ({movies.filter(m => s === 'Semua' || (m.status || 'Planned') === s).length})
-                    </button>
-                ))}
-            </div>
+                {/* Filter Status */}
+                <div className="filter-group">
+                    <strong className="control-label">Filter Status:</strong>
+                    <div className="filter-button-container">
+                        {STATUS_OPTIONS.map(s => (
+                            <button
+                                key={s}
+                                onClick={() => setActiveStatus(s)}
+                                className={`btn-filter ${activeStatus === s ? 'active' : ''}`}
+                            >
+                                {DISPLAY_STATUS_MAP[s]} ({movies.filter(m => s === 'Semua' || (m.status || 'Planned') === s).length})
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-            {/* KONTROL SORTIR */}
-            <div className="sort-controls">
-                <label htmlFor="sort-select">Urutkan Berdasarkan:</label>
-                <select id="sort-select" value={sortCriteria} onChange={handleSortChange} className="form-input sort-select">
-                    {SORT_OPTIONS.map(option => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
+                {/* KONTROL SORTIR */}
+                <div className="sort-controls">
+                    <label htmlFor="sort-select" className="control-label">Urutkan Berdasarkan:</label>
+                    <select id="sort-select" value={sortCriteria} onChange={handleSortChange} className="form-input sort-select">
+                        {SORT_OPTIONS.map(option => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
-
+            
             {/* Tampilan Movie Grid */}
+            {/* ... (Isi grid tetap sama) ... */}
+
             {isLoading ? (
                 <p style={{ textAlign: 'center', fontSize: '1.2em' }}>Memuat data dari Firebase...</p>
             ) : sortedAndFilteredMovies.length === 0 ? (

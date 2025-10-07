@@ -196,14 +196,14 @@ body {
 /* Tombol Filter */
 .btn-filter {
     padding: 8px 16px; 
-    margin: 0 4px;
+    margin: 4px 3px; /* Margin diperbaiki agar lebih rapat */
     border: 1px solid #ccc;
-    border-radius: 20px; /* Bentuk bulat */
+    border-radius: 20px; 
     cursor: pointer;
     background-color: #fff;
     transition: all 0.2s ease;
-    font-weight: 600;
-    font-size: 0.9em;
+    font-weight: 500; /* Disesuaikan untuk tampilan control panel */
+    font-size: 0.85em; /* Disesuaikan untuk tampilan control panel */
 }
 
 .btn-filter:hover {
@@ -218,55 +218,83 @@ body {
 }
 
 /* =================================================== */
-/* MOVIE CARD STYLES (Clean & Minimalist) */
+/* CONTROL PANEL (FILTER & SORTIR) */
 /* =================================================== */
-/* Styling untuk Badge Status di Card */
-.status-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75em;
+
+.control-panel {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.filter-group {
+    flex-basis: 45%; 
+    margin-bottom: 15px; 
+}
+
+.filter-button-container {
+    display: flex; 
+    flex-wrap: wrap;
+    gap: 5px 3px; 
+}
+
+.control-label {
+    font-size: 0.95em;
+    color: #4b5563; 
     font-weight: 700;
-    color: white;
-    z-index: 10;
-    /* Efek bayangan ringan */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+    margin-right: 10px;
+    display: block; 
+    margin-bottom: 5px;
 }
 
-/* Warna Status */
-.status-planned {
-    background-color: #6b7280; /* Abu-abu (Planned / Akan Ditonton) */
+/* Kontrol Sortir */
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-basis: 40%; 
+    justify-content: flex-end;
+    padding-top: 10px;
 }
 
-.status-watching {
-    background-color: #3b82f6; /* Biru (Watching / Sedang Ditonton) */
+.sort-controls .sort-select {
+    border: none; 
+    border-bottom: 2px solid #3b82f6; 
+    padding: 5px 0;
+    background-color: transparent;
+    font-weight: 600;
+    min-width: 180px;
+    cursor: pointer;
+    box-sizing: content-box; /* Agar tidak menggunakan box-sizing: border-box yang diwarisi dari form-input */
 }
 
-.status-finished {
-    background-color: #10b981; /* Hijau (Finished / Selesai Ditonton) */
-}
-
+/* =================================================== */
+/* MOVIE CARD STYLES (Clean, Minimalist, 3D Poster) */
+/* =================================================== */
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-    gap: 25px; /* Jarak antar card */
+    gap: 25px; 
 }
 
 .movie-card {
     border-radius: 12px; 
     overflow: hidden; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Shadow halus */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background-color: white;
     display: flex;
     flex-direction: column;
     min-height: auto; 
+    position: relative; 
 }
 
 .movie-card:hover {
-    transform: translateY(-3px); /* Efek hover lebih halus */
+    transform: translateY(-3px); 
     box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 }
 
@@ -274,25 +302,20 @@ body {
     width: 100%;
     height: 300px;
     object-fit: cover;
-}
-
-.card-poster.placeholder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #e2e8f0;
-    color: #94a3b8;
-    font-weight: 600;
-    font-size: 1.2em;
+    position: relative;
+    z-index: 5;
+    /* Efek shadow agar poster terlihat timbul */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
 }
 
 .card-content {
-    padding: 15px 10px; /* Padding disesuaikan */
-    text-align: left; /* Rata kiri */
+    padding: 15px 10px 10px; 
+    text-align: left; 
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding-top: 10px; 
 }
 
 .card-title {
@@ -301,7 +324,7 @@ body {
     margin: 5px 0 0;
 }
 
-/* GENRE BARU (Minimalist) */
+/* GENRE MINIMALIST */
 .card-genre {
     display: inline-block;
     padding: 2px 6px; 
@@ -309,15 +332,14 @@ body {
     font-size: 0.7em; 
     font-weight: 700;
     margin-bottom: 5px;
-    
-    color: #4b5563; /* Teks abu-abu gelap */
-    background-color: #e5e7eb; /* Latar belakang abu-abu sangat muda */
+    color: #4b5563; 
+    background-color: #e5e7eb; 
     border: 1px solid #d1d5db; 
 }
 
-/* RATING BARU (Bintang dan Teks) */
+/* RATING BARU */
 .card-rating {
-    background-color: transparent !important; /* Hapus latar belakang warna lama */
+    background-color: transparent !important;
     padding: 0;
     margin-top: 5px; 
     font-size: 1em;
@@ -325,75 +347,40 @@ body {
 }
 
 .card-rating span {
-    color: #4b5563 !important; /* Warna teks rating disamakan */
+    color: #4b5563 !important;
 }
 
-/* WARNA RATING DINAMIS: Hanya berlaku untuk bintang (*.rating-stars) */
-/* Bintang dasar (untuk MovieCard dan DetailModal) */
+/* WARNA RATING DINAMIS */
 .rating-stars {
-    color: #ffc107; /* Default warna bintang (emas) */
+    color: #ffc107; 
+}
+.rating-high .rating-stars { color: #10b981; }
+.rating-medium .rating-stars { color: #f59e0b; }
+.rating-low .rating-stars { color: #ef4444; }
+
+/* STATUS BADGE */
+.status-badge {
+    position: absolute;
+    top: 15px; 
+    right: 15px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: white;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
 }
 
-/* Rating TINGGI (4 atau 5) */
-.rating-high .rating-stars {
-    color: #10b981; /* Hijau Keren */
-}
-
-/* Rating SEDANG (3) */
-.rating-medium .rating-stars {
-    color: #f59e0b; /* Oranye */
-}
-
-/* Rating RENDAH (1 atau 2) */
-.rating-low .rating-stars {
-    color: #ef4444; /* Merah */
-}
-
-.sort-controls {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    padding: 10px 0;
-    /* Rata kanan agar sejajar dengan filter */
-    justify-content: flex-end; 
-}
-
-.sort-controls label {
-    font-weight: 600;
-    color: #555;
-    font-size: 0.9em;
-}
-
-.sort-controls .sort-select {
-    /* Menggunakan style form-input dasar, tapi disesuaikan */
-    width: auto;
-    min-width: 200px;
-    padding: 8px 12px;
-    border: 1px solid #cfd8dc;
-    border-radius: 8px;
-    background-color: white;
-    /* Memastikan box-sizing diatur agar tidak terlalu lebar */
-    box-sizing: border-box; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-/* Jika Anda ingin memastikan select tetap terlihat bagus di mobile */
-@media (max-width: 600px) {
-    .sort-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .sort-controls .sort-select {
-        min-width: 100%;
-    }
-}
+/* Warna Status */
+.status-planned { background-color: #6b7280; }
+.status-watching { background-color: #3b82f6; }
+.status-finished { background-color: #10b981; }
 
 
 /* =================================================== */
 /* MODAL STYLES */
 /* =================================================== */
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -541,6 +528,22 @@ body {
         margin: 0 10px;
     }
     
+    /* Responsive Control Panel */
+    .control-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-group {
+        flex-basis: 100%;
+    }
+    .sort-controls {
+        justify-content: flex-start;
+        padding-top: 10px;
+        border-top: 1px dashed #eee;
+        flex-basis: 100%;
+    }
+
+    /* Responsive Modal */
     .modal-body {
         flex-direction: column;
         align-items: center;
