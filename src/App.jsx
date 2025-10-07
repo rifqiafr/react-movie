@@ -2,49 +2,98 @@ import React, { useState, useEffect } from 'react';
 import MovieForm from './components/MovieForm';
 import MovieCard from './components/MovieCard';
 import Header from './components/Header';
-import './index.css'; // Pastikan CSS global diimport
+import './index.css'; 
+
+// IMPORT FIREBASE FUNCTIONS
+import { db } from './firebase'; // Import db instance
+import { 
+  collection, 
+  getDocs, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc 
+} from 'firebase/firestore'; 
+
+// Nama koleksi di Firestore
+const MOVIES_COLLECTION = 'watchlist'; 
 
 function App() {
-  // Mengambil data dari Local Storage saat inisialisasi
-  const [movies, setMovies] = useState(() => {
-    const savedMovies = localStorage.getItem('myWatchlist');
-    return savedMovies ? JSON.parse(savedMovies) : [];
-  });
+  const [movies, setMovies] = useState([]);
   const [editingMovie, setEditingMovie] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // State untuk loading
 
-  // Menyimpan data ke Local Storage setiap kali 'movies' berubah
+  // ===================================
+  // FUNGSI R (READ): Mengambil Data dari Firestore
+  // ===================================
+  const fetchMovies = async () => {
+    setIsLoading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, MOVIES_COLLECTION));
+      const moviesList = querySnapshot.docs.map(doc => ({
+        id: doc.id, // ID DARI FIREBASE
+        ...doc.data() // data film
+      }));
+      setMovies(moviesList);
+    } catch (error) {
+      console.error("Error fetching documents: ", error);
+      alert("Gagal memuat data dari Firebase!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Panggil fetchMovies saat komponen pertama kali dimuat
   useEffect(() => {
-    localStorage.setItem('myWatchlist', JSON.stringify(movies));
-  }, [movies]);
+    fetchMovies();
+  }, []);
 
-  // Fungsi untuk menambahkan atau mengubah film
-  const saveMovie = (newMovie) => {
-    if (newMovie.id) {
-      // Logic EDIT
-      setMovies(movies.map(movie => 
-        movie.id === newMovie.id ? newMovie : movie
-      ));
-      setEditingMovie(null);
-    } else {
-      // Logic ADD
-      setMovies([...movies, { ...newMovie, id: Date.now() }]);
+  // ===================================
+  // FUNGSI C, U, D (CREATE, UPDATE, DELETE)
+  // ===================================
+  const saveMovie = async (movieData) => {
+    try {
+      if (movieData.id) {
+        // Logic UPDATE
+        const movieRef = doc(db, MOVIES_COLLECTION, movieData.id);
+        // Hapus ID dari data sebelum update agar tidak tersimpan di Firestore data
+        const { id: _id, ...dataToUpdate } = movieData;  
+        await updateDoc(movieRef, dataToUpdate);
+        alert("Film berhasil diubah!");
+      } else {
+        // Logic CREATE
+        await addDoc(collection(db, MOVIES_COLLECTION), movieData);
+        alert("Film berhasil ditambahkan!");
+      }
+      // Ambil data terbaru setelah operasi
+      fetchMovies(); 
+    } catch (error) {
+      console.error("Error saving movie: ", error);
+      alert("Gagal menyimpan data ke Firebase.");
+    }
+    setEditingMovie(null); // Tutup form edit
+  };
+
+  const deleteMovie = async (id) => {
+    if (window.confirm("Yakin ingin menghapus film ini? (Data akan terhapus online)")) {
+      try {
+        await deleteDoc(doc(db, MOVIES_COLLECTION, id));
+        alert("Film berhasil dihapus!");
+        // Ambil data terbaru setelah operasi
+        fetchMovies(); 
+      } catch (error) {
+        console.error("Error deleting movie: ", error);
+        alert("Gagal menghapus data dari Firebase.");
+      }
     }
   };
 
-  // Fungsi untuk menghapus film
-  const deleteMovie = (id) => {
-    if (window.confirm("Yakin ingin menghapus film ini?")) {
-      setMovies(movies.filter(movie => movie.id !== id));
-    }
-  };
-
-  // Fungsi untuk memulai proses edit
   const startEdit = (movie) => {
     setEditingMovie(movie);
-    // Scroll ke bagian form edit setelah tombol edit diklik
     document.getElementById('tambah').scrollIntoView({ behavior: 'smooth' });
   };
   
+  // Perubahan pada tampilan saat loading
   return (
     <div className="app-container">
       <Header movieCount={movies.length} />
@@ -53,6 +102,7 @@ function App() {
         
         {/* Form untuk Add atau Edit */}
         <section id="tambah" className="form-section">
+            {/* ... (Tampilan h2 dan MovieForm tetap sama) ... */}
             <h2 style={{ textAlign: 'center', color: '#333' }}>
                 {editingMovie ? '📝 Edit Entri' : '➕ Tambah Entri Baru'}
             </h2>
@@ -70,7 +120,10 @@ function App() {
           <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '30px' }}>
             Daftar Tontonan ({movies.length} Entri)
           </h2>
-          {movies.length === 0 ? (
+          
+          {isLoading ? (
+            <p style={{ textAlign: 'center', fontSize: '1.2em' }}>Memuat data dari Firebase...</p>
+          ) : movies.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#777' }}>
                 Daftar tontonan masih kosong. Tambahkan film pertama Anda!
             </p>
