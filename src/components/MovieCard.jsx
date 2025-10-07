@@ -17,20 +17,37 @@ const renderStars = (rating) => {
 
 // Fungsi bantuan: Menentukan kelas CSS berdasarkan rating (untuk warna dinamis)
 const getRatingColorClass = (rating) => {
-    if (rating >= 4) return 'rating-high';      // Hijau
-    if (rating >= 3) return 'rating-medium';    // Kuning/Oranye
-    return 'rating-low';                       // Merah
+    if (rating >= 4) return 'rating-high';      
+    if (rating >= 3) return 'rating-medium';    
+    return 'rating-low';                       
 };
 
+// Fungsi bantuan BARU: Menentukan kelas CSS badge berdasarkan status
+const getStatusBadgeClass = (status) => {
+    switch (status) {
+        case 'Watching':
+            return 'status-watching'; 
+        case 'Finished':
+            return 'status-finished'; 
+        case 'Planned':
+        default:
+            return 'status-planned'; 
+    }
+}
 
-// Menerima onCardClick untuk membuka modal
+
 function MovieCard({ movie, onCardClick }) {
     
   const ratingClass = getRatingColorClass(movie.rating);
+  const statusClass = getStatusBadgeClass(movie.status || 'Planned'); // Gunakan default 'Planned'
     
   return (
-    // Tambahkan onClick ke div utama untuk membuka modal
-    <div className="movie-card" onClick={onCardClick} style={{ cursor: 'pointer' }}>
+    <div className="movie-card" onClick={onCardClick} style={{ cursor: 'pointer', position: 'relative' }}>
+        
+      {/* BADGE STATUS BARU */}
+      <div className={`status-badge ${statusClass}`}>
+          {movie.status || 'Planned'}
+      </div>
       
       {/* Gambar Poster */}
       {movie.posterUrl ? (
@@ -38,7 +55,6 @@ function MovieCard({ movie, onCardClick }) {
           src={movie.posterUrl} 
           alt={movie.title} 
           className="card-poster"
-          // Placeholder jika gambar gagal dimuat
           onError={(e) => { e.target.onerror = null; e.target.src="https://via.placeholder.com/200x300?text=No+Poster"; }}
         />
       ) : (
@@ -49,18 +65,16 @@ function MovieCard({ movie, onCardClick }) {
 
       <div className="card-content">
         <div>
-            {/* Tampilan Genre (Style minimalist, rata kiri) */}
+            {/* Tampilan Genre */}
             <span className="card-genre">[{movie.genre || 'Lainnya'}]</span> 
             <h4 className="card-title">{movie.title}</h4>
         </div>
         
-        {/* Rating (Menerapkan kelas untuk warna bintang dinamis) */}
+        {/* Rating */}
         <div className={`card-rating ${ratingClass}`}>
             {renderStars(movie.rating)} 
             <span style={{ marginLeft: '5px' }}>({movie.rating}/5)</span>
         </div>
-
-        {/* Tombol aksi (Edit/Hapus) dihapus dari sini karena sudah dipindahkan ke Modal Detail */}
 
       </div>
     </div>

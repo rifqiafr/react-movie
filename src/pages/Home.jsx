@@ -8,6 +8,14 @@ import DetailModal from '../components/DetailModal';
 // --- KONSTANTA ---
 const GENRES = ['Semua', 'Indonesia', 'Anime', 'Drakor', 'Western', 'Lainnya']; 
 
+const STATUS_OPTIONS = ['Semua', 'Planned', 'Watching', 'Finished']; // OPSI FILTER STATUS
+const DISPLAY_STATUS_MAP = {
+    'Semua': 'Semua',
+    'Planned': 'Akan Ditonton',
+    'Watching': 'Sedang Ditonton',
+    'Finished': 'Selesai'
+};
+
 const SORT_OPTIONS = [
     { value: 'recent', label: 'Terbaru Ditambahkan (Default)' },
     { value: 'rating_desc', label: 'Rating Tertinggi' },
@@ -19,43 +27,41 @@ const SORT_OPTIONS = [
 
 function Home({ movies, deleteMovie, startEdit, isLoading }) {
     const [activeGenre, setActiveGenre] = useState('Semua'); 
-    const [sortCriteria, setSortCriteria] = useState('recent'); // STATE BARU UNTUK SORTIR
+    const [activeStatus, setActiveStatus] = useState('Semua'); // STATE BARU UNTUK STATUS FILTER
+    const [sortCriteria, setSortCriteria] = useState('recent'); 
     const [selectedMovie, setSelectedMovie] = useState(null); 
     
     // --- LOGIKA FILTER DAN SORTIR UTAMA ---
     const sortedAndFilteredMovies = useMemo(() => {
+        let currentMovies = movies;
+        
         // 1. FILTER BERDASARKAN GENRE
-        let currentMovies = activeGenre === 'Semua'
-            ? movies
-            : movies.filter(movie => movie.genre === activeGenre);
+        currentMovies = activeGenre === 'Semua'
+            ? currentMovies
+            : currentMovies.filter(movie => movie.genre === activeGenre);
 
-        // 2. SORTIR BERDASARKAN KRITERIA
-        // Perhatian: Gunakan spread operator [...] untuk membuat copy array agar tidak memutasi state asli
+        // 2. FILTER BERDASARKAN STATUS BARU
+        currentMovies = activeStatus === 'Semua'
+            ? currentMovies
+            : currentMovies.filter(movie => (movie.status || 'Planned') === activeStatus); 
+
+        // 3. SORTIR BERDASARKAN KRITERIA
         return [...currentMovies].sort((a, b) => {
             switch (sortCriteria) {
                 case 'rating_desc':
-                    // Rating Tertinggi (dari 5 ke 1)
                     return b.rating - a.rating; 
-                    
                 case 'title_asc':
-                    // Judul A-Z
                     return a.title.localeCompare(b.title);
-                    
                 case 'title_desc':
-                    // Judul Z-A
-                    return a.title.localeCompare(b.title) * -1; // Membalikkan A-Z
-                    
+                    return a.title.localeCompare(b.title) * -1;
                 case 'recent':
                 default:
-                    // Urutan default (Firebase ID/timestamp descending)
-                    // Jika ID adalah number/timestamp: b.id - a.id; 
-                    // Jika ID adalah string (default Firebase), kita biarkan urutan asli dari fetch.
                     return 0; 
             }
         });
-    }, [movies, activeGenre, sortCriteria]);
+    }, [movies, activeGenre, activeStatus, sortCriteria]);
 
-    // FUNGSI UNTUK MENGUBAH KRITERIA SORTIR
+
     const handleSortChange = (e) => {
         setSortCriteria(e.target.value);
     };
@@ -80,8 +86,9 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
                 Daftar Tontonan
             </h2>
             
-            {/* Filter Button */}
-            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            {/* Filter Genre */}
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                <strong style={{ display: 'block', marginBottom: '10px' }}>Filter Genre:</strong>
                 {GENRES.map(g => (
                     <button
                         key={g}
@@ -93,7 +100,21 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
                 ))}
             </div>
 
-            {/* KONTROL SORTIR BARU */}
+            {/* Filter Status BARU */}
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <strong style={{ display: 'block', marginBottom: '10px' }}>Filter Status:</strong>
+                {STATUS_OPTIONS.map(s => (
+                    <button
+                        key={s}
+                        onClick={() => setActiveStatus(s)}
+                        className={`btn-filter ${activeStatus === s ? 'active' : ''}`}
+                    >
+                        {DISPLAY_STATUS_MAP[s]} ({movies.filter(m => s === 'Semua' || (m.status || 'Planned') === s).length})
+                    </button>
+                ))}
+            </div>
+
+            {/* KONTROL SORTIR */}
             <div className="sort-controls">
                 <label htmlFor="sort-select">Urutkan Berdasarkan:</label>
                 <select id="sort-select" value={sortCriteria} onChange={handleSortChange} className="form-input sort-select">
@@ -110,7 +131,7 @@ function Home({ movies, deleteMovie, startEdit, isLoading }) {
                 <p style={{ textAlign: 'center', fontSize: '1.2em' }}>Memuat data dari Firebase...</p>
             ) : sortedAndFilteredMovies.length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#777' }}>
-                    {activeGenre === 'Semua' ? 'Daftar tontonan masih kosong.' : `Tidak ada entri untuk genre ${activeGenre}.`}
+                    Tidak ada film yang cocok dengan filter saat ini.
                     <br/><Link to="/add" style={{color: '#3b82f6', textDecoration: 'none'}}>Tambahkan sekarang!</Link>
                 </p>
             ) : (

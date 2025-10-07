@@ -220,6 +220,34 @@ body {
 /* =================================================== */
 /* MOVIE CARD STYLES (Clean & Minimalist) */
 /* =================================================== */
+/* Styling untuk Badge Status di Card */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: white;
+    z-index: 10;
+    /* Efek bayangan ringan */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+}
+
+/* Warna Status */
+.status-planned {
+    background-color: #6b7280; /* Abu-abu (Planned / Akan Ditonton) */
+}
+
+.status-watching {
+    background-color: #3b82f6; /* Biru (Watching / Sedang Ditonton) */
+}
+
+.status-finished {
+    background-color: #10b981; /* Hijau (Finished / Selesai Ditonton) */
+}
+
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
