@@ -1,8 +1,11 @@
+// src/App.jsx
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './pages/Home';
 import AddPage from './pages/AddPage';
+import Toast from './components/Toast'; // PENTING: Import Toast
 import './index.css';
 
 // Import Firebase
@@ -18,28 +21,44 @@ import {
 
 const MOVIES_COLLECTION = 'watchlist'; 
 
-// MainApp menampung semua logika data dan membagikannya ke Pages
 function MainApp() { 
   const [movies, setMovies] = useState([]);
   const [editingMovie, setEditingMovie] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // --- STATE BARU UNTUK TOAST ---
+  const [toast, setToast] = useState({ 
+      message: '', 
+      type: 'success', 
+      isVisible: false 
+  });
+
+  // Fungsi untuk menampilkan Toast
+  const showToast = (message, type = 'success') => {
+      setToast({ message, type, isVisible: true });
+  };
+
+  // Fungsi untuk menyembunyikan Toast
+  const hideToast = () => {
+      setToast(prev => ({ ...prev, isVisible: false }));
+  };
+  // -----------------------------
+
   // ===================================
-  // FUNGSI R (READ): Mengambil Data dari Firestore
+  // FUNGSI R (READ)
   // ===================================
   const fetchMovies = async () => {
     setIsLoading(true);
     try {
       const querySnapshot = await getDocs(collection(db, MOVIES_COLLECTION));
       const moviesList = querySnapshot.docs.map(doc => ({
-        id: doc.id, // ID DARI FIREBASE
-        ...doc.data() // data film
+        id: doc.id, 
+        ...doc.data() 
       }));
       setMovies(moviesList);
     } catch (error) {
       console.error("Error fetching documents: ", error);
-      // alert("Gagal memuat data dari Firebase!"); // Komentar sementara saat dev
     } finally {
       setIsLoading(false);
     }
@@ -59,32 +78,43 @@ function MainApp() {
         const movieRef = doc(db, MOVIES_COLLECTION, movieData.id);
         const { id: _id, ...dataToUpdate } = movieData; 
         await updateDoc(movieRef, dataToUpdate);
+        
+        // GANTI ALERT
+        showToast("Perubahan film berhasil disimpan!", 'success'); 
+        
       } else {
         // Logic CREATE
         await addDoc(collection(db, MOVIES_COLLECTION), movieData);
+        
+        // GANTI ALERT
+        showToast("Film baru berhasil ditambahkan!", 'success');
       }
-      // Ambil data terbaru setelah operasi
       fetchMovies(); 
     } catch (error) {
       console.error("Error saving movie: ", error);
-      alert("Gagal menyimpan data ke Firebase.");
+      // GANTI ALERT
+      showToast("Gagal menyimpan data ke Firebase.", 'error');
     }
-    setEditingMovie(null); // Tutup form edit
+    setEditingMovie(null); 
   };
 
   const deleteMovie = async (id) => {
-    if (window.confirm("Yakin ingin menghapus film ini? (Data akan terhapus online)")) {
+    if (window.confirm("Yakin ingin menghapus film ini?")) {
       try {
         await deleteDoc(doc(db, MOVIES_COLLECTION, id));
         fetchMovies(); 
+        
+        // GANTI ALERT
+        showToast("Film berhasil dihapus dari daftar.", 'success');
+        
       } catch (error) {
         console.error("Error deleting movie: ", error);
-        alert("Gagal menghapus data dari Firebase.");
+        // GANTI ALERT
+        showToast("Gagal menghapus data dari Firebase.", 'error');
       }
     }
   };
 
-  // Fungsi untuk memulai edit (hanya navigasi ke halaman Edit)
   const startEdit = (movie) => {
     navigate(`/add/${movie.id}`);
   };
@@ -95,30 +125,35 @@ function MainApp() {
 
       <main className="main-content">
         <Routes>
-          {/* Halaman Utama: Daftar Tontonan */}
           <Route 
             path="/" 
             element={<Home movies={movies} deleteMovie={deleteMovie} startEdit={startEdit} isLoading={isLoading} />} 
           />
-          {/* Halaman Tambah Baru */}
           <Route 
             path="/add" 
             element={<AddPage saveMovie={saveMovie} movies={movies} editingMovie={editingMovie} setEditingMovie={setEditingMovie} />} 
           />
-          {/* Halaman Edit Berdasarkan ID */}
           <Route 
             path="/add/:id" 
             element={<AddPage saveMovie={saveMovie} movies={movies} editingMovie={editingMovie} setEditingMovie={setEditingMovie} />} 
           />
         </Routes>
       </main>
+      
+      {/* INTEGRASI KOMPONEN TOAST */}
+      <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          isVisible={toast.isVisible} 
+          onClose={hideToast}
+      />
+
     </div>
   );
 }
 
 // Fungsi utama App yang mengaktifkan Router
 function App() {
-  // BASE_URL disetel di vite.config.js untuk GitHub Pages
   return (
     <Router basename={import.meta.env.BASE_URL || '/react-movie/'}> 
         <MainApp />
