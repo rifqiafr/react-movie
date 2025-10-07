@@ -1,17 +1,254 @@
+/* src/index.css */
+
+/* Reset Dasar */
 body {
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #f4f7f9; /* Warna latar belakang lembut */
+  color: #333;
 }
 
-#root {
+/* Kontainer Utama */
+.app-container {
+    min-height: 100vh;
+}
+
+.main-content {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: white;
-  min-height: 100vh;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin: 30px auto;
+  padding: 0 20px;
 }
 
-/* Sedikit style tambahan untuk form dan card di komponen masing-masing */
+.divider {
+    margin: 60px 0;
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* -------------------- HEADER/NAVBAR STYLES -------------------- */
+.nav-link-hover {
+    position: relative;
+    /* Efek underline saat hover */
+}
+
+.nav-link-hover::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin-top: 5px;
+    right: 0;
+    background: #4ade80; /* Warna hijau keren */
+    transition: width 0.3s ease;
+}
+
+.nav-link-hover:hover::after {
+    width: 100%;
+    left: 0;
+    background: #4ade80;
+}
+
+
+/* -------------------- FORM STYLES -------------------- */
+.form-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-container {
+    padding: 30px; 
+    border-radius: 12px; 
+    background-color: #ffffff; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Shadow lebih dalam */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-input {
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid #cfd8dc; 
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: #3b82f6; /* Warna biru saat focus */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.form-actions {
+    margin-top: 30px;
+}
+
+/* Tombol (Button) Styling */
+.btn-submit {
+    padding: 12px 25px; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-right: 15px;
+}
+
+.btn-add {
+    background-color: #10b981; /* Green */
+}
+
+.btn-add:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+}
+
+.btn-edit {
+    background-color: #3b82f6; /* Blue */
+}
+
+.btn-edit:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    background-color: #94a3b8; /* Gray */
+    color: white;
+    padding: 12px 25px; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #64748b;
+}
+
+/* -------------------- MOVIE CARD STYLES -------------------- */
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Responsif */
+    gap: 30px;
+}
+
+.movie-card {
+    border-radius: 12px; 
+    overflow: hidden; 
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 450px; /* Tinggi minimum agar kartu seragam */
+}
+
+.movie-card:hover {
+    transform: translateY(-5px); /* Efek melayang */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.card-poster {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.card-poster.placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.card-content {
+    padding: 15px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-title {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.card-rating {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.rating-stars {
+    color: #fbbf24; /* Warna Emas untuk Bintang */
+}
+
+.card-actions .btn-action {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    margin: 0 5px;
+}
+
+.card-actions .btn-edit {
+    background-color: #93c5fd; /* Light Blue */
+    color: #1e3a8a;
+}
+.card-actions .btn-edit:hover {
+    background-color: #60a5fa;
+}
+
+.card-actions .btn-delete {
+    background-color: #fca5a5; /* Light Red */
+    color: #7f1d1d;
+}
+.card-actions .btn-delete:hover {
+    background-color: #f87171;
+}
+
+/* -------------------- RESPONSIVE (Opsional) -------------------- */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 0 15px;
+    }
+    
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+    }
+
+    /* Navbar menyesuaikan untuk mobile */
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    nav {
+        margin-top: 10px;
+    }
+    nav a {
+        margin: 0 10px;
+    }
+}

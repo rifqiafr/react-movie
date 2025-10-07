@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MovieForm from './components/MovieForm';
 import MovieCard from './components/MovieCard';
+import Header from './components/Header'; // <-- Import Header
 // Buat folder 'components' dan file di dalamnya nanti
 
 function App() {
@@ -42,29 +43,38 @@ function App() {
     setEditingMovie(movie);
   };
   
-  return (
-    <div style={{ padding: '20px' }}>
-      <h1>My Movie/Anime Watchlist</h1>
+    return (
+    <div> {/* Hapus style padding di div ini */}
+      <Header movieCount={movies.length} /> {/* Gunakan Header */}
 
-      {/* Form untuk Add atau Edit */}
-      <MovieForm 
-        saveMovie={saveMovie} 
-        editingMovie={editingMovie}
-        setEditingMovie={setEditingMovie} // Untuk membatalkan edit
-      />
+      <div style={{ maxWidth: '1200px', margin: '30px auto', padding: '0 20px' }}>
+        
+        {/* Form untuk Add atau Edit */}
+        <div id="tambah"> {/* Anchor untuk navigasi */}
+            <h2>{editingMovie ? 'Edit Entri' : 'Tambah Entri Baru'}</h2>
+            <MovieForm 
+              saveMovie={saveMovie} 
+              editingMovie={editingMovie}
+              setEditingMovie={setEditingMovie}
+            />
+        </div>
 
-      <hr style={{ margin: '30px 0' }} />
+        <hr style={{ margin: '40px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-      <h2>Daftar Tontonan ({movies.length} Entri)</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {movies.map(movie => (
-          <MovieCard 
-            key={movie.id} 
-            movie={movie} 
-            deleteMovie={deleteMovie}
-            startEdit={startEdit}
-          />
-        ))}
+        {/* Daftar Film */}
+        <div id="daftar"> {/* Anchor untuk navigasi */}
+          <h2>Daftar Tontonan ({movies.length} Entri)</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px', paddingBottom: '50px' }}>
+            {movies.map(movie => (
+              <MovieCard 
+                key={movie.id} 
+                movie={movie} 
+                deleteMovie={deleteMovie}
+                startEdit={startEdit}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

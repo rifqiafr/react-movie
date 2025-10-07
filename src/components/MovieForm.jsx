@@ -1,41 +1,39 @@
 import React, { useState, useEffect } from 'react';
 
-// Nilai awal formulir
 const initialFormState = {
   title: '',
   posterUrl: '',
-  rating: 3, // Default rating 3
+  rating: 3,
 };
 
 function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
   const [formData, setFormData] = useState(initialFormState);
 
-  // Efek untuk mengisi form ketika ada film yang sedang di-edit
+  // Mengisi form saat mode edit
   useEffect(() => {
     if (editingMovie) {
-      // Mengisi form dengan data film yang sedang di-edit, termasuk ID
       setFormData(editingMovie); 
     } else {
-      // Reset form jika tidak ada film yang di-edit
       setFormData(initialFormState);
     }
   }, [editingMovie]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    // Mengubah rating menjadi angka
+    const finalValue = name === 'rating' ? parseInt(value) : value;
+    setFormData({ ...formData, [name]: finalValue });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title) {
-        alert("Judul tidak boleh kosong!");
+    if (!formData.title || formData.rating < 1 || formData.rating > 5) {
+        alert("Judul tidak boleh kosong dan Rating harus antara 1-5.");
         return;
     }
     
     saveMovie(formData);
-    // Setelah menyimpan, reset form ke nilai awal
-    setFormData(initialFormState); 
+    setFormData(initialFormState);
   };
   
   const handleCancelEdit = () => {
@@ -43,58 +41,44 @@ function MovieForm({ saveMovie, editingMovie, setEditingMovie }) {
   };
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '5px' }}>
-      <h3>{editingMovie ? 'Edit Film/Acara' : 'Tambah Film/Acara Baru'}</h3>
+    <div className="form-container">
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="title">Judul:</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-            style={{ width: '100%', padding: '5px' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="posterUrl">URL Poster (Link Gambar):</label>
-          <input
-            type="text"
-            id="posterUrl"
-            name="posterUrl"
-            value={formData.posterUrl}
-            onChange={handleChange}
-            style={{ width: '100%', padding: '5px' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="rating">Rating (1-5):</label>
-          <input
-            type="number"
-            id="rating"
-            name="rating"
-            value={formData.rating}
-            onChange={handleChange}
-            min="1"
-            max="5"
-            required
-            style={{ width: '100%', padding: '5px' }}
-          />
-        </div>
         
-        <button type="submit" style={{ padding: '8px 15px', backgroundColor: editingMovie ? 'orange' : 'green', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px' }}>
-          {editingMovie ? 'Simpan Perubahan' : 'Tambah ke Daftar'}
-        </button>
-        
-        {editingMovie && (
-            <button type="button" onClick={handleCancelEdit} style={{ padding: '8px 15px', backgroundColor: 'gray', color: 'white', border: 'none', cursor: 'pointer' }}>
-                Batalkan Edit
+        {['title', 'posterUrl', 'rating'].map((field) => (
+            <div className="form-group" key={field}>
+                <label htmlFor={field}>{field === 'title' ? 'Judul' : field === 'posterUrl' ? 'URL Poster' : 'Rating (1-5)'}:</label>
+                <input
+                    type={field === 'rating' ? 'number' : 'text'}
+                    id={field}
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    required={field !== 'posterUrl'}
+                    min={field === 'rating' ? "1" : null}
+                    max={field === 'rating' ? "5" : null}
+                    className="form-input"
+                />
+            </div>
+        ))}
+
+        <div className="form-actions">
+            <button 
+                type="submit" 
+                className={editingMovie ? "btn-submit btn-edit" : "btn-submit btn-add"}
+            >
+                {editingMovie ? '💾 Simpan Perubahan' : '➕ Tambah ke Daftar'}
             </button>
-        )}
+            
+            {editingMovie && (
+                <button 
+                    type="button" 
+                    onClick={handleCancelEdit} 
+                    className="btn-cancel"
+                >
+                    ❌ Batalkan Edit
+                </button>
+            )}
+        </div>
       </form>
     </div>
   );
