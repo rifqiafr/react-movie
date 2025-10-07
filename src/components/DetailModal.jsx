@@ -46,11 +46,11 @@ function DetailModal({ movie, onClose, onDelete, onEdit }) {
                         <h3 className="modal-title">{movie.title}</h3>
                         
                         <p className="modal-info">
-                            **Genre:** <span className="card-genre">{movie.genre || 'Lainnya'}</span>
+                            Genre: <span className="card-genre">{movie.genre || 'Lainnya'}</span>
                         </p>
                         
                         <p className="modal-info">
-                            **Rating Saya:** {renderStars(movie.rating)} ({movie.rating}/5)
+                            Rating Saya: {renderStars(movie.rating)} ({movie.rating}/5)
                         </p>
                         
                         <div className="modal-action-buttons">
@@ -72,7 +72,7 @@ function DetailModal({ movie, onClose, onDelete, onEdit }) {
                         <div style={{ marginTop: '20px', color: '#333' }}>
                             <h4 style={{ margin: '10px 0', borderBottom: '1px solid #ddd', paddingBottom: '5px' }}>Sinopsis:</h4>
                             <p style={{ lineHeight: '1.6', fontSize: '0.95em' }}>
-                                **{movie.overview || "Sinopsis tidak tersedia. Anda dapat menambahkannya melalui tombol Edit."}**
+                                {movie.overview || "Sinopsis tidak tersedia. Anda dapat menambahkannya melalui tombol Edit."}
                             </p>
                         </div>
                     </div>
