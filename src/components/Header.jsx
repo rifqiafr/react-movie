@@ -4,45 +4,40 @@ import React from 'react';
 import { Link } from 'react-router-dom'; 
 
 function Header({ movieCount }) {
-  const headerStyle = {
-    // Background Dark Navy/Black yang elegan
-    backgroundColor: '#0f172a', 
-    color: '#fff',
-    padding: '18px 30px', // Padding lebih tebal
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'sticky',
-    top: 0,
-    zIndex: 1000,
-    // Shadow kuat untuk efek 'high-end'
-    boxShadow: '0 5px 15px rgba(0,0,0,0.4)', 
-  };
-
-  const logoStyle = {
-    fontSize: '2.0em', // Logo lebih besar
-    fontWeight: '800', // Lebih Bold
-    letterSpacing: '1px',
-    color: '#cbd5e1', 
-    textDecoration: 'none',
-    textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-  };
-
-  const navItemStyle = {
-      color: '#cbd5e1',
-      textDecoration: 'none',
-      marginLeft: '25px',
-      fontSize: '1.1em',
-      transition: 'color 0.3s ease',
-  };
-
+  
   return (
-    <header style={headerStyle}>
-      {/* Ganti teks logo dan ikon */}
-      <Link to="/" style={logoStyle}>🍿 MovieTime</Link>
-      <nav>
-        <Link to="/add" style={navItemStyle} className="nav-link-hover">Tambah Baru</Link>
-        <Link to="/" style={navItemStyle} className="nav-link-hover">Daftar ({movieCount})</Link>
+    <header className="
+        fixed top-0 left-0 w-full z-[2000] 
+        bg-gray-900/95 
+        text-white 
+        px-4 py-4 md:px-10 md:py-5 /* Padding disesuaikan untuk mobile */
+        flex justify-between items-center 
+        shadow-xl
+    ">
+      {/* Logo: Dibuat selalu terlihat (block) dengan font yang lebih kecil di mobile */}
+      <Link to="/" className="
+        text-xl sm:text-3xl font-extrabold tracking-wider 
+        text-gray-200 
+        hover:text-white 
+        transition duration-200 
+        block /* Selalu tampil */
+      ">
+        🍿 MovieTime
+      </Link>
+      
+      <nav className="flex items-center">
+        <Link 
+          to="/add" 
+          className="app-nav-link nav-link-hover text-sm sm:text-lg ml-4 sm:ml-6 text-gray-300 hover:text-white transition duration-200"
+        >
+          Tambah Baru
+        </Link>
+        <Link 
+          to="/" 
+          className="app-nav-link nav-link-hover text-sm sm:text-lg ml-4 sm:ml-6 text-gray-300 hover:text-white transition duration-200"
+        >
+          Daftar ({movieCount})
+        </Link>
       </nav>
     </header>
   );

@@ -4,52 +4,64 @@ import React, { useEffect } from 'react';
 
 function Toast({ message, type, isVisible, onClose }) {
     
-    // Panggil useEffect TANPA SYARAT di level teratas
+    // Panggil useEffect di level teratas (tetap benar)
     useEffect(() => {
         let timer;
         
-        // Cek kondisi di DALAM useEffect
+        // Cek kondisi di DALAM useEffect (tetap benar)
         if (isVisible) {
             timer = setTimeout(() => {
                 onClose();
-            }, 3000); // Toast akan hilang setelah 3 detik
+            }, 3000); 
 
-            // Cleanup function: Membersihkan timer saat komponen di-unmount atau isVisible berubah
+            // Cleanup function
             return () => clearTimeout(timer); 
         }
         
-        // Pastikan cleanup dijalankan jika isVisible berubah menjadi false
+        // Cleanup untuk timer yang mungkin belum tereksekusi
         return () => { 
             if (timer) clearTimeout(timer);
         };
         
-    }, [isVisible, onClose]); // isVisible dan onClose harus ada di dependency array
+    }, [isVisible, onClose]); 
 
-    // Jika tidak terlihat, jangan tampilkan apa-apa (ini di luar hook)
+    // Jika tidak terlihat, jangan tampilkan apa-apa (tetap benar)
     if (!isVisible) return null;
 
-    // Menentukan style berdasarkan tipe
-    const toastStyle = {
-        backgroundColor: type === 'error' ? '#dc2626' : '#10b981', 
-        color: 'white',
-        padding: '12px 20px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-        position: 'fixed',
-        bottom: '30px',
-        right: '30px',
-        zIndex: '3000', 
-        fontSize: '1em',
-        fontWeight: '600',
-        transition: 'transform 0.3s ease-out',
-        display: 'flex',
-        alignItems: 'center',
-    };
-
+    // Menentukan class dinamis berdasarkan tipe
+    const typeClass = type === 'error' 
+        ? 'bg-red-600' // Error color
+        : 'bg-green-600'; // Success color
+    
     const icon = type === 'error' ? '❌ ' : '✅ ';
 
     return (
-        <div style={toastStyle}>
+        // MENGHILANGKAN STYLE INLINE transform: translateY(0)
+        <div 
+            className={`
+                ${typeClass} 
+                text-white 
+                p-4 
+                rounded-lg 
+                shadow-2xl 
+                fixed 
+                bottom-8 
+                right-8 
+                z-[3000] 
+                text-base 
+                font-semibold 
+                flex 
+                items-center 
+                transition 
+                duration-300 
+                ease-out
+                
+                /* Class yang mengontrol transform/posisi */
+                transform 
+                /* Menggunakan transform-y-0 untuk menunjukkan posisi terlihat */
+                translate-y-0 
+            `}
+        >
             {icon} {message}
         </div>
     );
